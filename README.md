@@ -21,6 +21,10 @@ We're going to build main device on raspberry pi 4. It gives us a lot of computi
 
 **Don't forget to switch switches to 0 1 position!**
 
+
+## Database 
+<img src="./Graphics/base.png" alt="Database structure">
+
 ## Milestones
 - **20.12.2020** - Read tags and write or delete them from .txt file;
 - **03.01.2020** - First version of app and database

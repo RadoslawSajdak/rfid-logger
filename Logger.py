@@ -52,7 +52,6 @@ def exit_handler():
 if __name__ == '__main__':
     
     setup()
-    found = loop()
     atexit.register(exit_handler)
     while 1:
         found = loop()

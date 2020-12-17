@@ -23,6 +23,7 @@ We're going to build main device on raspberry pi 4. It gives us a lot of computi
 
 
 ## Database 
+
 <img src="./Graphics/base.png" alt="Database structure">
 
 ## Milestones

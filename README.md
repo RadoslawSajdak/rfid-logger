@@ -35,16 +35,28 @@ set set to database
 - [ ] Scanning - RFID -> returns MAC in string format  
 - [ ] Find returned MAC in database -> return part_id, part_name, return_date, user_ID, status + ?name/email(RODO)
     - [ ] If not in base print "Add button " -> get part_name (?get status or set available by default?) -> save into database 
-    - [ ] If in the database -> print on screen returned information -?(part_name, return_date, user_ID + ?name/email(RODO)) 
-        -> 2 buttons "Add to database", ("Rent/? Check-out"(if status == available) OR "Return"(if status == NotReturned))
-            - [ ] "Add to database": get part_name -> add to database
-            - [ ] "Rent/? Check-out": get ?e-mail -> return coresponding user_ID
-                - if 404 print "User not found" + "Register button" 
-                - If found -> get check-out_date, return_date, project? -> save into database in Order, change Status to NotReturned 
-            - [ ] "Return" : get ?actual date -> set date into return_date, set available=returned, set status=available  
-            - [ ] 
-            - [ ] 
-            - [ ] 
+    - [ ] If in the database -> print on screen returned information -?(part_name, return_date, user_ID + ?name/email(RODO))   
+        -> 2 buttons "Add to database", ("Rent/? Check-out"(if status == available) OR "Return"(if status == NotReturned))   
+        - [ ] Add to database": get part_name -> add to database   
+        - [ ] Rent/? Check-out": get ?e-mail -> return coresponding user_ID    
+            - if 404 print "User not found" + "Register button"   
+            - If found -> get check-out_date, return_date, project? -> save into database in Order, change Status to NotReturned   
+        - [ ] "Return" : get ?actual date -> set date into return_date, set available=returned, set status=available     
+            
+
+### GUI and base menagment   it totally depends of time that we have        
+- [ ] Register fuction()/ add user(): get name, surname, index, e-mail -> save in database 
+- [ ] Look into base() - filtering and sorting database
+    - [ ] filter by partname: get part_name -> return (status, part_name, and user and order information  ?????)
+    - [ ] filter by status:  same as above
+    - [ ] find user and its order history: get ??? - > return sorted orders  
+    - [ ] filter by project ???? -> return notreturned yet OR???? order history
+    - [ ] ???????????
+    - [ ] sort by name
+    - [ ] sort by return date
+    - [ ] ???????????????
+- [ ] if we need edit user/part data function eg. edit email() ????
+- [ ] ??????????????????
 
 ## Milestones
 - **20.12.2020** - Read tags and write or delete them from .txt file;

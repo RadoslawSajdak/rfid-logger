@@ -25,6 +25,27 @@ We're going to build main device on raspberry pi 4. It gives us a lot of computi
 ## Database 
 <img src="./Graphics/base.png" alt="Database structure">
 
+## Temporary part of read me :  
+### Aplication futures - TODO  
+Legend:  
+get means get from user   
+return mainly mean return from database  
+set set to database  
+#### Scanning  
+- [ ] Scanning - RFID -> returns MAC in string format  
+- [ ] Find returned MAC in database -> return part_id, part_name, return_date, user_ID, status + ?name/email(RODO)
+    - [ ] If not in base print "Add button " -> get part_name (?get status or set available by default?) -> save into database 
+    - [ ] If in the database -> print on screen returned information -?(part_name, return_date, user_ID + ?name/email(RODO)) 
+        -> 2 buttons "Add to database", ("Rent/? Check-out"(if status == available) OR "Return"(if status == NotReturned))
+            - [ ] "Add to database": get part_name -> add to database
+            - [ ] "Rent/? Check-out": get ?e-mail -> return coresponding user_ID
+                - if 404 print "User not found" + "Register button" 
+                - If found -> get check-out_date, return_date, project? -> save into database in Order, change Status to NotReturned 
+            - [ ] "Return" : get ?actual date -> set date into return_date, set available=returned, set status=available  
+            - [ ] 
+            - [ ] 
+            - [ ] 
+
 ## Milestones
 - **20.12.2020** - Read tags and write or delete them from .txt file;
 - **03.01.2020** - First version of app and database

@@ -41,10 +41,11 @@ set set to database
         - [ ] Rent/? Check-out": get ?e-mail -> return coresponding user_ID    
             - if 404 print "User not found" + "Register button"   
             - If found -> get check-out_date, return_date, project? -> save into database in Order, change Status to NotReturned   
-        - [ ] "Return" : get ?actual date -> set date into return_date, set available=returned, set status=available     
+        - [ ] "Return" : (get ?actual date) OR (get it from Internet)  -> set date into return_date, set available=returned, set status=available     
             
 
-### GUI and base menagment   it totally depends of time that we have        
+### GUI and base menagment   it totally depends of time that we have      
+- [ ] Delete Orders' history after year/ half of year ???  
 - [ ] Register fuction()/ add user(): get name, surname, index, e-mail -> save in database 
 - [ ] Look into base() - filtering and sorting database
     - [ ] filter by partname: get part_name -> return (status, part_name, and user and order information  ?????)
@@ -57,6 +58,12 @@ set set to database
     - [ ] ???????????????
 - [ ] if we need edit user/part data function eg. edit email() ????
 - [ ] ??????????????????
+
+## Skils 
+- mySQL 
+- Python
+  - mySQL in Python 
+  - Kivy library for user interface
 
 ## Milestones
 - **20.12.2020** - Read tags and write or delete them from .txt file;

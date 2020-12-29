@@ -21,9 +21,12 @@ def setup():
     # If all is good, setup is done
     print("Waiting for a card...\n\n")
 
+def read_once():
+    nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106KBPS)
+
 # Reading in infinite loop
 def loop():
-    time.sleep(1)
+    print("LOOP!")
     while(1):
         success, uid_t = nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106KBPS)
         if (success):
@@ -55,5 +58,6 @@ if __name__ == '__main__':
     atexit.register(exit_handler)
     while 1:
         found = loop()
-        write_to_base(found)
+        #write_to_base(found)
+        print(found)
         time.sleep(0.3)

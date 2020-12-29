@@ -1,22 +1,19 @@
 import mysql.connector as mysql
 import const
 
-#TODO: GET status with MAC
-#TODO: ADD to data base (doesnt exist)
-#TODO: ID Generator
-#           Find last Serial in DB, and get next
-MAC = "dedefgtyhjlpolokiytgrfedrgyhuko"
-MAC2= "aabbccdd"
-MAC3= "aabbccee"
-MAC4= "aabbccff"
 
 def setup():
+    """ It gives You connection to database """
     db_connection = mysql.connect(host=const.HOST, database=const.DATABASE, user=const.USER, password=const.PASSWORD)
     print("Connected to:", db_connection.get_server_info())
     return db_connection
 
 
 def get_status(MAC):
+    """ Get status of item from database.
+
+    Possibilities of return: AVAILABLE, NOT_AVAILABLE, NOT_PRESENT
+    """
     cp_mac = (check_mac(MAC),)
 
     db_connection = setup()
@@ -32,6 +29,16 @@ def get_status(MAC):
         return "NOT_PRESENT"
 
 def check_mac(MAC):
+    """ MAC address is the most important data in our program so it should be always verified.
+
+    You can use:
+        - aaaaaaaa
+        - aa:aa:aa:aa
+        - AaaAaaaA
+        - AA:aa:aA:aa
+        etc. (where "a" is digit 0-9 or sign a-z)
+    Function will change it to upper case and format to correct AA:AA:AA:AA
+    """
     if len(MAC) == 11:
         t_mac = str(MAC).upper()
         if t_mac[2] == ":" and t_mac[5] == ":" and t_mac[8] == ":":
@@ -50,6 +57,11 @@ def check_mac(MAC):
 
 
 def get_order(MAC):
+    """ Function to associate MAC of rented item with user. Function returns completly infos about
+        user and item too as dictionaries.
+
+        Examples of dictionaries are in consts.py
+    """
     cp_mac = (check_mac(MAC),)
     rented_part = {}
     renting_person = {}
@@ -83,6 +95,9 @@ def get_order(MAC):
     return [renting_person, rented_part]
 
 def add_item(MAC,name):
+    """ 
+    Simple adding item to database. You should insert name and MAC. Part ID will be added automatically in database.
+    """
     cp_mac = (check_mac(MAC),)
     db_connection = setup()
     cursor = db_connection.cursor()
@@ -93,6 +108,10 @@ def add_item(MAC,name):
     db_connection.commit()
 
 def rent_item(MAC,user,ret_date):
+    """ You can rent item (make a new order) using this function.
+        Input "user" is a dictionary like in consts.py file.
+        ret_date format is "yyyy-mm-dd"
+    """
     cp_mac = (check_mac(MAC),)
     db_connection = setup()
     cursor = db_connection.cursor()

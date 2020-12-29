@@ -1,14 +1,11 @@
-print("Hello world!")
-
 from pn532pi import Pn532Spi,Pn532, pn532
 import time
-#import binascii
-import atexit
 
 PN532_SPI = Pn532Spi(Pn532Spi.SS0_GPIO8)
 nfc = Pn532(PN532_SPI)
 
 def setup():
+    """ Init function for RFID. Should be called at the beggining of the code but just once. """
     nfc.begin() 
     time.sleep(1)
     a = nfc.getFirmwareVersion() #Check if device is working well TODO: protection like try/except
@@ -22,11 +19,18 @@ def setup():
     print("Waiting for a card...\n\n")
 
 def read_once():
+    """ 
+    Flash RFID module's memory and activate RF Field 
+    
+    You should call it before each interrupt!
+    """
     nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106KBPS)
 
 # Reading in infinite loop
 def loop():
-    print("LOOP!")
+    """
+    Reading loop. Returns MAC in AA:AA:AA:AA format. 
+    """
     while(1):
         success, uid_t = nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106KBPS)
         if (success):
@@ -42,22 +46,13 @@ def loop():
             uid = uid.upper()
             print("Card found!", uid)
             return uid
-##################### End of RFID functions ###############################
-def write_to_base(string_to_write):
-    f = open('/home/pi/Desktop/RFID_Logger_Telephoners/rfid-logger/Base.txt', "a")
-    f.write((string_to_write + '\n'))
-    f.close()
-
-def exit_handler():
-    print("Interrupted! Leaving program!")
 
 
 if __name__ == '__main__':
     
     setup()
-    atexit.register(exit_handler)
     while 1:
         found = loop()
-        #write_to_base(found)
+
         print(found)
         time.sleep(0.3)

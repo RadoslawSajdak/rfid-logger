@@ -1,0 +1,274 @@
+#:import Label kivy.uix.label.Label
+
+MenagerWindow:
+    current: "main"
+    MainWindow:
+    RentingWindow:
+    ReturnWindow:
+    NotExistWindow:
+
+
+<MainWindow>:
+    name: "main"
+
+
+    GridLayout:
+        cols: 1
+    
+        Label:
+            text: "RFID Logger"
+            size_hint_y : .2
+
+        GridLayout:
+            cols: 2
+            
+
+            ScrollView:              
+                GridLayout:
+                    size_hint_y: None
+                    cols:1
+                    id: list
+                    height: self.minimum_height
+                    spacing: 10
+                    padding: 10
+
+
+
+            Label: 
+                size_hint_x : .5
+                text: "Put item on the RFID Reader to rent or return it"
+            
+            Button:
+                size_hint_y : .2
+                text : "Reload base"
+                id: but
+                on_release: 
+                    root.base()
+
+
+            
+
+
+
+<RentingWindow>:
+    name: "renting"
+    
+
+    GridLayout:
+        cols: 1
+
+        Label:
+            text: "RFID Logger"
+            size_hint_y : .2
+
+        GridLayout:
+            cols: 2
+            spacing: [15]
+
+            GridLayout:
+                cols: 2
+                spacing: [15]
+
+                Label: 
+                    text: "Name"
+
+                TextInput:
+                    id: us_name
+                    multiline: False
+
+                Label: 
+                    text: "Surname"
+                
+                TextInput:
+                    id: us_surname
+                    multiline: False
+
+                Label: 
+                    text: "Index"
+                
+                TextInput:
+                    id: us_index
+                    multiline: False
+
+                Label: 
+                    text: "E-mail"
+                
+                TextInput:
+                    id: us_email
+                    multiline: False
+
+                Label: 
+                    text: "Phone"
+                
+                TextInput:
+                    id: us_phone
+                    multiline: False
+
+                Label: 
+                    text: "Project"
+                
+                TextInput:
+                    id: us_project
+                    multiline: False
+
+            GridLayout:
+                cols: 1
+                size_hint_x : .8
+
+                Label:
+                    id: dev_name
+                    text: "Item name"
+
+                Label:
+                    id: dev_id
+                    text: "Item ID"
+
+                Label:
+                    id: dev_mac
+                    text: "Item MAC"
+
+                Label:
+                    id: dev_date
+                    text: root.today()
+                    
+
+                TextInput:
+                    id: returndate
+                    multiline: False  
+                    hint_text: "Return date"
+
+        GridLayout:
+            cols: 2
+            size_hint_y : .2
+
+            FloatLayout:
+                Button:
+                    text: "Rent"
+                    size_hint: (.5, .4)
+                    pos_hint : {"top" : 0.7, "right" : 0.7}
+                    on_release: 
+                        app.root.current= "main"
+                        root.manager.transition.direction = "right"
+
+            FloatLayout:
+                Button:
+                    text: "Cancel"
+                    size_hint: (.5, .4)
+                    pos_hint : {"top" : 0.7, "right" : 0.7}
+                    on_release: 
+                        returndate.text = root.fun()
+                        app.root.current= "renting"
+                        root.manager.transition.direction = "right"        
+                
+
+
+
+
+
+<ReturnWindow>:
+    name: "return"
+
+    GridLayout:
+        cols: 1
+
+        Label:
+            text: "RFID Logger"
+            size_hint_y : .2
+
+        FloatLayout:
+            GridLayout:
+                cols: 2
+                spacing: [15]
+                size_hint: (.8, .7)
+                pos_hint : {"x" : 0.1, "y" : 0.2}
+
+                GridLayout:
+                    cols: 1
+                    spacing: [15]
+
+                    Label: 
+                        id: us_name
+                        text: "Name"
+                        text_size: self.width, None
+
+                    Label: 
+                        id: us_surname
+                        text: "Surname"
+                        text_size: self.width, None
+
+                    Label: 
+                        id: us_index
+                        text: "Index"
+                        text_size: self.width, None
+
+                    Label: 
+                        id: us_email
+                        text: "E-mail"
+                        text_size: self.width, None
+
+                    Label: 
+                        id: us_phone
+                        text: "Phone"
+                        text_size: self.width, None
+
+                    Label: 
+                        id: us_project
+                        text: "Project"
+                        text_size: self.width, None
+
+                GridLayout:
+                    cols: 1
+                    spacing: [15]
+
+                    Label: 
+                        id: dev_name
+                        text: "Name"
+
+                    Label: 
+                        id: dev_id
+                        text: "ID"
+
+                    Label: 
+                        id: dev_mac
+                        text: "MAC"
+
+                    Label: 
+                        id: dev_date
+                        text: root.today()
+
+                    TextInput: 
+                        id: returndate
+                        multiline: False  
+                        hint_text: "Date of return"
+
+
+
+        GridLayout:
+            cols: 2
+            size_hint_y : .2
+
+            FloatLayout:
+                Button:
+                    text: "Return"
+                    size_hint: (.5, .4)
+                    pos_hint : {"top" : 0.7, "right" : 0.7}
+                    on_release: 
+                        app.root.current= "main"
+                        root.manager.transition.direction = "down"
+
+            FloatLayout:
+                Button:
+                    text: "Cancel"
+                    size_hint: (.5, .4)
+                    pos_hint : {"top" : 0.7, "right" : 0.7}
+                    on_release: 
+                        app.root.current= "main"
+                        root.manager.transition.direction = "down"        
+
+
+
+
+
+
+<NotExistWindow>:
+    name: "notexist"

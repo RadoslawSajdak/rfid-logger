@@ -6,6 +6,7 @@ import GUI as app
 import threading
 
 
+
 def check_item(MAC):
     """ Look for item in database and take an action.
     As input you should put MAC of item in format "aaaaaaaa" or "aa:aa:aa:aa".
@@ -35,17 +36,18 @@ def check_item(MAC):
 def app_thread():
     while True:
         print("Read")
-        nfc.read_once()
-        GPIO.wait_for_edge(16, GPIO.FALLING)
-        database.MAC_db = nfc.loop()
+        #nfc.read_once()
+        database.MAC_db = input()
+        #GPIO.wait_for_edge(16, GPIO.FALLING)
+        #database.MAC_db = nfc.loop()
         check_item(database.MAC_db)
         time.sleep(1)
 
 
 if __name__ == "__main__":
-    nfc.setup()
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    #nfc.setup()
+    #GPIO.setmode(GPIO.BCM)
+    #GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     thrd = threading.Thread(target=app_thread)
     thrd.start()
     app.RFIDApp().run()

@@ -1,16 +1,10 @@
 #:import Label kivy.uix.label.Label
 
-MenagerWindow:
-    current: "main"
-    MainWindow:
-    RentingWindow:
-    ReturnWindow:
-    NotExistWindow:
 
 
 <MainWindow>:
-    name: "main"
 
+    list :list
 
     GridLayout:
         cols: 1
@@ -21,7 +15,7 @@ MenagerWindow:
 
         GridLayout:
             cols: 2
-            
+
 
             ScrollView:              
                 GridLayout:
@@ -34,6 +28,7 @@ MenagerWindow:
 
 
 
+
             Label: 
                 size_hint_x : .5
                 text: "Put item on the RFID Reader to rent or return it"
@@ -43,7 +38,7 @@ MenagerWindow:
                 text : "Reload base"
                 id: but
                 on_release: 
-                    root.base()
+                    root.dev_base()
 
 
             
@@ -51,7 +46,7 @@ MenagerWindow:
 
 
 <RentingWindow>:
-    name: "renting"
+
     
 
     GridLayout:
@@ -156,7 +151,6 @@ MenagerWindow:
                     size_hint: (.5, .4)
                     pos_hint : {"top" : 0.7, "right" : 0.7}
                     on_release: 
-                        returndate.text = root.fun()
                         app.root.current= "renting"
                         root.manager.transition.direction = "right"        
                 
@@ -166,11 +160,23 @@ MenagerWindow:
 
 
 <ReturnWindow>:
-    name: "return"
 
+    us_name : us_name
+    us_surname : us_surname
+    us_index : us_index
+    us_email : us_email
+    us_phone : us_phone
+    us_project : us_project
+
+    dev_name : dev_name
+    dev_id : dev_id
+    dev_mac : dev_mac
+    dev_date : dev_date
+    returndate : returndate
+    returnButtonID : returnButtonID
     GridLayout:
         cols: 1
-
+        
         Label:
             text: "RFID Logger"
             size_hint_y : .2
@@ -239,7 +245,10 @@ MenagerWindow:
                     TextInput: 
                         id: returndate
                         multiline: False  
-                        hint_text: "Date of return"
+                        hint_text: "Date of return <YYYY-MM-DD>"
+                        on_text_validate:
+                            root.checkDate()
+
 
 
 
@@ -249,12 +258,12 @@ MenagerWindow:
 
             FloatLayout:
                 Button:
+                    id: returnButtonID
                     text: "Return"
                     size_hint: (.5, .4)
                     pos_hint : {"top" : 0.7, "right" : 0.7}
                     on_release: 
-                        app.root.current= "main"
-                        root.manager.transition.direction = "down"
+                        root.returnButton()
 
             FloatLayout:
                 Button:
@@ -262,8 +271,7 @@ MenagerWindow:
                     size_hint: (.5, .4)
                     pos_hint : {"top" : 0.7, "right" : 0.7}
                     on_release: 
-                        app.root.current= "main"
-                        root.manager.transition.direction = "down"        
+                        root.cancelButton()      
 
 
 
@@ -271,4 +279,3 @@ MenagerWindow:
 
 
 <NotExistWindow>:
-    name: "notexist"

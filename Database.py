@@ -1,6 +1,7 @@
 import mysql.connector as mysql
 import const
 
+MAC_db = "F7:9F:CB:A6"
 
 def setup():
     """ It gives You connection to database """
@@ -51,7 +52,8 @@ def check_mac(MAC):
             if i % 2 == 0 and i != 0:
                 t_mac +=":"
             t_mac += MAC[i]
-        return t_mac.upper()
+        MAC_db = t_mac.upper()
+        return MAC_db
     else:
         return "INPUT_ERROR"
 
@@ -70,7 +72,7 @@ def get_order(MAC):
     cursor = db_connection.cursor()
     cursor.execute("SELECT * FROM Parts WHERE MAC = %s", cp_mac )
     part = cursor.fetchone()
-
+    print(part)
     # Get info about part #
     rented_part["mac"] = cp_mac[0]
     rented_part["part_id"] = part[0]
@@ -140,7 +142,7 @@ def rent_item(MAC,user,ret_date):
 
 
 if __name__ == "__main__":
-    #print(get_status(MAC))
+    print(get_status(MAC))
     #print(check_mac(MAC))
     #print(get_order(MAC2))
     #add_item(MAC3,"Raspberry")

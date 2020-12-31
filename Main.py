@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 import Logger as nfc
 import Database as database
-import rfid_scan as app
+import GUI as app
 import threading
 
 
@@ -14,10 +14,10 @@ def check_item(MAC):
     nothing will happen.
     """
     status = database.get_status(MAC)
-    print(MAC, status)
+    app.MainWindow.NFC_detection(status)
     if status == "NOT_AVAILABLE":
         print("SWITCH_TO_RETURN_SCREEN")
-        person, item = database.get_order()
+        person, item = database.get_order(MAC)
         print(person,"\n",item)
 
     elif status == "AVAILABLE":
@@ -37,7 +37,8 @@ def app_thread():
         print("Read")
         nfc.read_once()
         GPIO.wait_for_edge(16, GPIO.FALLING)
-        check_item(nfc.loop())
+        database.MAC_db = nfc.loop()
+        check_item(database.MAC_db)
         time.sleep(1)
 
 
@@ -47,6 +48,6 @@ if __name__ == "__main__":
     GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     thrd = threading.Thread(target=app_thread)
     thrd.start()
-    #app.RFIDApp().run()
+    app.RFIDApp().run()
 
 

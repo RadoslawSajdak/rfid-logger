@@ -47,7 +47,7 @@ class MainWindow(Screen):
         super(MainWindow,self).__init__(**kwargs)
         pass 
 
-    def NFC_detection(status):                           ##<< CHANGING SCREEN
+    def NFC_detection(status):                           ##<< CHANGING SCREEN - use it when detection
         sm.current="return" if status == "NotReturned" else "renting"
         sm.transition.direction="up" if status == "NotReturned" else "left"
 

@@ -1,5 +1,6 @@
 import mysql.connector as mysql
 import const
+from datetime import datetime
 
 MAC_db = "F7:9F:CB:A6"
 
@@ -72,7 +73,7 @@ def get_order(MAC):
     cursor = db_connection.cursor()
     cursor.execute("SELECT * FROM Parts WHERE MAC = %s", cp_mac )
     part = cursor.fetchone()
-    print(part)
+ 
     # Get info about part #
     rented_part["mac"] = cp_mac[0]
     rented_part["part_id"] = part[0]
@@ -81,13 +82,14 @@ def get_order(MAC):
     rented_part["return_date"] = part[4]
 
     # Get current owner info #
-    cursor.execute("SELECT User_ID FROM Orders WHERE Part_ID = %s", (part[0],) )
+    cursor.execute("SELECT User_ID FROM Orders WHERE Part_ID = %s AND Available = 'NotReturned'", (part[0],) ) #TODO NotReturned -> NOT_RETURNED
     uid = cursor.fetchone()
-    print(uid)
+
     renting_person["user_id"] = uid[0]
 
-    cursor.execute("SELECT * FROM Users WHERE User_ID = %s", uid )
+    cursor.execute("SELECT * FROM Users WHERE User_ID = %s", (renting_person["user_id"],))
     user = cursor.fetchone()
+ 
     renting_person["name"] = user[1]
     renting_person["surname"] = user[2]
     renting_person["student_id"] = user[3]
@@ -109,7 +111,7 @@ def add_item(MAC,name):
     cursor.execute("INSERT INTO Parts (MAC, Part_Name) VALUES (%s, %s)",val )
     db_connection.commit()
 
-def rent_item(MAC,user,ret_date):
+def rent_item(MAC,user):
     """ You can rent item (make a new order) using this function.
         Input "user" is a dictionary like in consts.py file.
         ret_date format is "yyyy-mm-dd"
@@ -126,18 +128,49 @@ def rent_item(MAC,user,ret_date):
     try:
         cursor.execute("SELECT User_ID FROM Users WHERE Email = %s", (user["email"],) )
         uid = cursor.fetchone()[0]
+
+        updates = "UPDATE Users SET Name = '" + user["name"] + "', Surname = '" + user["surname"] + "', StudentID = '" + user["student_id"] + "', Phone = '" + user["phone"] + "' WHERE Email = %s" 
+        cursor.execute(updates,(user["email"],))
+        db_connection.commit()
+
     except:
         cursor.execute("INSERT INTO Users (Name, Surname, StudentID, Email, Phone) VALUES (%s, %s,%s, %s,%s)",\
            (user["name"],user["surname"],user["student_id"],user["email"],user["phone"]))
         db_connection.commit()
         cursor.execute("SELECT User_ID FROM Users WHERE Email = %s", (user["email"],) )
         uid = cursor.fetchone()[0]
+
     # Make a new order
-    cursor.execute("INSERT INTO Orders (User_ID, Part_ID,Return_date) VALUES (%s, %s, %s)",\
-        (uid,pid,ret_date) )
+    cursor.execute("INSERT INTO Orders (User_ID, Part_ID,Rented, Return_date) VALUES (%s, %s, %s, %s)",\
+        (uid,pid,str(datetime.today().strftime('%Y-%m-%d')),user["return_date"]) )
     db_connection.commit()
 
-def get_devices():
+    # Change status of the part
+    cursor.execute("UPDATE Parts SET Status = 'NOT_AVAILABLE' WHERE MAC = %s",cp_mac)
+    db_connection.commit()
+
+    sql = ("UPDATE `Parts` SET `Return_date` = '" + user["return_date"] + "' WHERE MAC = %s")
+    cursor.execute(sql,cp_mac)
+
+    db_connection.commit()
+
+
+def get_one_part(MAC):
+    single_part = {}
+    cp_mac = (check_mac(MAC),)
+    db_connection = setup()
+    cursor = db_connection.cursor()
+
+    # Get part ID
+    cursor.execute("SELECT * FROM Parts WHERE MAC = %s", cp_mac )
+    part_t = cursor.fetchone()
+
+    single_part["part_id"] = part_t[0]
+    single_part["mac"] = part_t[1]
+    single_part["name"] = part_t[2]
+    return single_part
+
+def get_all_devices():
     single_part = {}
     parts_dictionary = []
 
@@ -145,11 +178,8 @@ def get_devices():
     cursor = db_connection.cursor()
     cursor.execute("SELECT * FROM Parts")
     part = cursor.fetchall()
-    print(len(part))
-    print(part)
     # Get info about part #
     for i in part:
-        print(i)
         single_part["mac"] = i[1]
         single_part["part_id"] = i[0]
         single_part["name"] = i[2]
@@ -159,9 +189,40 @@ def get_devices():
         print(parts_dictionary)
     return parts_dictionary
 
+def prologue(part_id,date):
+    db_connection = setup()
+    cursor = db_connection.cursor()
+
+    sql = "UPDATE Orders SET Return_date = '" + str(date) + "' WHERE Part_ID = '" + str(part_id) +"' AND Available = 'NotReturned'" #TODO NotReturned -> NOT_RETURNED
+    cursor.execute(sql)
+
+    db_connection.commit()
+def return_item(MAC):
+    cp_mac = (check_mac(MAC),)
+    db_connection = setup()
+    cursor = db_connection.cursor()
+    part_id = get_one_part(MAC)["part_id"]
+    cursor.execute("UPDATE Parts SET Status = 'AVAILABLE' WHERE MAC = %s", cp_mac )
+    db_connection.commit()
+
+    cursor.execute("UPDATE Parts SET Return_date = NULL WHERE MAC = %s", cp_mac )
+    db_connection.commit()
+
+    sql = "UPDATE Orders SET Return_date = '" + datetime.today().strftime('%Y-%m-%d') + "' WHERE Part_ID = '" + str(part_id) + "' AND Available = 'NotReturned' "
+    cursor.execute(sql) #TODO Returned->RETURNED
+    db_connection.commit()
+
+    sql = "UPDATE Orders SET Available = 'Returned' WHERE Part_ID = '" + str(part_id) + "' AND Available = 'NotReturned' "#TODO NotReturned -> NOT_RETURNED
+    cursor.execute(sql) #TODO Returned->RETURNED
+    db_connection.commit()
+
+
+
 
 if __name__ == "__main__":
     print(get_status(MAC))
+    #return_item("0A:94:B1:1A")
+    #prologue("11","2023-1-1")
     #print(check_mac(MAC))
     #print(get_order(MAC2))
     #add_item(MAC3,"Raspberry")

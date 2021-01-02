@@ -49,7 +49,7 @@ class Main_window(Screen):
 
     def on_enter(self):
         """Update local values"""
-        self.dev_data = database.get_devices()   ###FROM DATABASE: list of devices
+        self.dev_data = database.get_all_devices()   ###FROM DATABASE: list of devices
         pass
         
 
@@ -82,8 +82,8 @@ class Renting_window(Screen):
 
     def on_enter(self):
         """Get data from database and update internal variables """
-        user, part = database.get_order(database.MAC_db)  ##TODO change this function to get_device
-        self.dev_data = part   
+        db_data = database.get_one_part(database.MAC_db)  ##TODO change this function to get_device
+        self.dev_data = db_data   
 
         self.dev_name.text = self.dev_data["name"]
         self.dev_id.text = str(self.dev_data["part_id"])
@@ -131,8 +131,9 @@ class Renting_window(Screen):
         if (self.correct) :
             self.correct = self.check_date() 
         if (self.correct) :
-            self.renting_user={"name":self.us_name.text, "surname": self.us_surname.text, "index": self.us_index.text, \
-                "email" : self.us_phone.text, "return_date" : self.return_date.text}
+            self.renting_user={"name":self.us_name.text, "surname": self.us_surname.text, "student_id": self.us_index.text, \
+                "email" : self.us_email.text, "phone" : self.us_phone.text, "return_date" : self.return_date.text}
+            database.rent_item(database.MAC_db, self.renting_user)
             ##TODO write self.renting_user into database  --- format line above
             sm.current= "main_screen"
             sm.transition.direction = "right"
@@ -192,11 +193,14 @@ class Return_window(Screen):
         """
         if self.return_button_id.text == "Prologue":
             #Device prologue
-            #self.returndate.text               #TODO (NEW RETURN DATE) BREAKPOINT    prologue
+            #database.prologue(self.dev_data["part_id"], self.return_date )             #TODO (NEW RETURN DATE) BREAKPOINT    prologue
             sm.transition.direction = "down"
             sm.current = "main_screen"
         else:
             #Devive returned
+            database.return_item(self.dev_data["mac"])
+            sm.transition.direction = "down"
+            sm.current = "main_screen"
             pass
 
 
@@ -229,6 +233,7 @@ class Not_exist_window(Screen):
         if(self.correct):
             self.new_name={"name":self.dev_name.text}
             ##TODO take this name 
+            database.add_item(database.MAC_db,self.dev_name.text)
             sm.current= "main_screen"
             sm.transition.direction = "left" 
 

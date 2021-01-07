@@ -6,15 +6,12 @@ from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.uix.floatlayout import FloatLayout
 import testy
 import Database as database
 from kivy.config import Config
 from functools import partial ##import partial, wich allows to apply arguments to functions returning a funtion with that arguments by default.
 
-class Personal_label(FloatLayout):
-    """Work in progres - test functionality"""
-    pass
+
 
 class Main_window(Screen):
     """Main window design and functionality"""
@@ -27,20 +24,22 @@ class Main_window(Screen):
 
         for i in range (len(self.dev_data)):
             top_button_share -= .4
-
+            button_share = Button(pos_hint={"x": 0, "top": top_button_share},
+                            size_hint_y=None, 
+                            height=40)
+            spaces = 70*" "
+            dev_information = str(self.dev_data[i]["name"])
             if self.dev_data[i]["status"]=="AVAILABLE":
-                button_share = \
-                    Button(pos_hint={"x": 0, "top": top_button_share},
-                            size_hint_y=None, 
-                            height=40,
-                            text = str(self.dev_data[i]["name"])+"   "+str(self.dev_data[i]["status"]))
-                          
+                dev_information += spaces[len(str(self.dev_data[i]["name"])): -len(str(self.dev_data[i]["status"]))]      
+                dev_information += str(self.dev_data[i]["status"])     
+                button_share.background_color = (0, 1, 0, 1)                                     
             else:
-                button_share = \
-                    Button(pos_hint={"x": 0, "top": top_button_share},
-                            size_hint_y=None, 
-                            height=40,
-                            text = str(self.dev_data[i]["name"])+"   "+str(self.dev_data[i]["return_date"]))
+                dev_information += spaces[len(str(self.dev_data[i]["name"])): -len(str(self.dev_data[i]["return_date"]))]    
+                dev_information += "    "
+                dev_information += str(self.dev_data[i]["return_date"]) 
+
+            button_share.text = dev_information
+
             device = "Name: %s \nMAC: %s \n + Whatever you want" % (self.dev_data[i]['name'], self.dev_data[i]['mac'])
             button_callback = partial(dev_info, device)        #Send argument to function
             button_share.bind(on_press = button_callback)  
@@ -80,16 +79,31 @@ class Main_window(Screen):
 class Renting_window(Screen):
     """Renting window design and functionality"""
 
+    us_data = {                            #data buffor
+            "user_id" : "",
+            "name" : "",
+            "surname" : "",
+            "student_id" : "",
+            "email" : "",
+            "phone" : ""}
+
     def on_enter(self):
         """Get data from database and update internal variables """
-        db_data = database.get_one_part(database.MAC_db)  ##TODO change this function to get_device
+        db_data = database.get_one_part(database.MAC_db)
         self.dev_data = db_data   
+
+        
 
         self.dev_name.text = self.dev_data["name"]
         self.dev_id.text = str(self.dev_data["part_id"])
         self.dev_mac.text = self.dev_data["mac"]
 
-        pass
+        self.us_name.text = self.us_data["name"]
+        self.us_surname.text = self.us_data["surname"]
+        self.us_index.text = self.us_data["student_id"]
+        self.us_email.text = self.us_data["email"]
+        self.us_phone.text = self.us_data["phone"]
+
     
     def check_date(self):
         """Check if written data is correct (format/value bigger than today's date)
@@ -134,9 +148,15 @@ class Renting_window(Screen):
             self.renting_user={"name":self.us_name.text, "surname": self.us_surname.text, "student_id": self.us_index.text, \
                 "email" : self.us_email.text, "phone" : self.us_phone.text, "return_date" : self.return_date.text}
             database.rent_item(database.MAC_db, self.renting_user)
-            ##TODO write self.renting_user into database  --- format line above
             sm.current= "main_screen"
             sm.transition.direction = "right"
+
+    def scan_student_card_button(self):
+        ##TODO your function - scaning ID
+        self.us_data["name"] = "Radosław"
+        #self.us_data =      #<<TODO information from base 
+        self.on_enter()
+        pass
 
     def cancel_button(self):
         """Cancel button functionality
@@ -223,20 +243,18 @@ class Not_exist_window(Screen):
         """Check if value is empty - some data are required
             return if(not empty)
         """
-        if len(value)<2:
-            required_info(value_type)
-        return 0 if len(value)<2 else 1
+        if (len(value)<2 or len(value)>40) :
+            required_info(value_type+ "  must be 2-40 character long")
+        return 0 if (len(value)<2 or len(value)>40) else 1
 
     def add_button(self):
         """Add button functionality"""
         self.correct = self.empty_value("Device name", self.dev_name.text)
         if(self.correct):
             self.new_name={"name":self.dev_name.text}
-            ##TODO take this name 
             database.add_item(database.MAC_db,self.dev_name.text)
             sm.current= "main_screen"
             sm.transition.direction = "left" 
-
 
     def cancel_button(self):
         """Cancel button functionality
@@ -259,8 +277,8 @@ def invalid_time():
 def required_info(info_name):
     """Popup to tell that information written by user is not correct"""
     pop = Popup(title = "Required info",
-                content=Label(text='This information is required :' + info_name),
-                size_hint=(None, None), size=(400, 200))
+                content=Label(text='This information is required :\n' + info_name),
+                size_hint=(None, None), size=(400, 300))
 
     pop.open()
 
@@ -280,7 +298,7 @@ screens = [Main_window(name="main_screen"), Renting_window(name="renting_screen"
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current="main_screen"
+sm.current="not_exist_screen"
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')   #<no red dots on screen
 

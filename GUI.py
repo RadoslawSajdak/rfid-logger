@@ -10,7 +10,7 @@ import testy
 import Database as database
 from kivy.config import Config
 from functools import partial ##import partial, wich allows to apply arguments to functions returning a funtion with that arguments by default.
-
+from kivy.utils import get_color_from_hex
 
 
 class Main_window(Screen):
@@ -23,7 +23,7 @@ class Main_window(Screen):
         self.ids.list.clear_widgets()
 
         for i in range (len(self.dev_data)):
-            top_button_share -= .4
+            top_button_share -= .1
             button_share = Button(pos_hint={"x": 0, "top": top_button_share},
                             size_hint_y=None, 
                             height=40)
@@ -32,11 +32,21 @@ class Main_window(Screen):
             if self.dev_data[i]["status"]=="AVAILABLE":
                 dev_information += spaces[len(str(self.dev_data[i]["name"])): -len(str(self.dev_data[i]["status"]))]      
                 dev_information += str(self.dev_data[i]["status"])     
-                button_share.background_color = (0, 1, 0, 1)                                     
+                button_share.background_color = get_color_from_hex('#6FAF8B') 
+                button_share.background_normal = ""      
+                button_share.color = (0, 0, 0, 1)                            
             else:
                 dev_information += spaces[len(str(self.dev_data[i]["name"])): -len(str(self.dev_data[i]["return_date"]))]    
                 dev_information += "    "
                 dev_information += str(self.dev_data[i]["return_date"]) 
+                today = date.today()
+                button_share.background_normal = ""      
+                button_share.color = (0, 0, 0, 1)  
+                if today.strftime("%d-%B-%Y") >= str(self.dev_data[i]["return_date"]):
+                    button_share.background_color = get_color_from_hex('#FF5733') 
+                else:
+                    button_share.background_color = get_color_from_hex('#a6a6a6')
+                        
 
             button_share.text = dev_information
 
@@ -298,7 +308,7 @@ screens = [Main_window(name="main_screen"), Renting_window(name="renting_screen"
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current="not_exist_screen"
+sm.current="main_screen"
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')   #<no red dots on screen
 

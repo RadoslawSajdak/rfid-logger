@@ -1,31 +1,42 @@
 #Global background
+#:import utils kivy.utils
 <Background_Color@Widget>:               
     background_color: 1, 0, 0, 1
     canvas.before:
         Color:
-            rgba: root.background_color
-        Rectangle:
-            size: self.size
+            rgb: utils.get_color_from_hex('#a6a6a6')
+        RoundedRectangle:
             pos: self.pos
+            size: self.size
+            radius: [10,]
 
 
 #Buttons in Renting window -- There must be Float Layout first
-<Renting_Window_Button@Button+Background_Color>:
-    size_hint: (.7, .4)
-    pos_hint : {"top" : 0.7, "right" : 0.9}
+<Window_Button@Button+Background_Color>:
+    size_hint: (.6, .4)
+    pos_hint : {"top" : 0.7, "x" : 0.2}
     halign : "center"
+    background_color: 0,0,0,0
 
 
 <Main_window>:
 
     list :list
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'kivy_img/Background.png'
 
-    GridLayout:
-        cols: 1
+    BoxLayout:
+        halign: 'center'
+        orientation: 'vertical'
+        spacing: 10
+
+        Image:
+            source: 'kivy_img/LOGO.png'
+            size_hint_y: .3
     
-        Label:
-            text: "RFID Logger"
-            size_hint_y : .2
 
         GridLayout:
             cols: 2
@@ -42,16 +53,28 @@
 
 
 
+            BoxLayout:
+                size_hint_x: .3
+                halign: 'center'
+                orientation: 'vertical'
+                spacing: 10
 
-            Label: 
-                size_hint_x : .5
-                text: "Put item on the RFID Reader"
-            
-            Button:
-                size_hint_y : .2
-                text : "Reload base"
-                on_release: 
-                    root.dev_base()
+                
+                Label: 
+                    halign: 'center'
+                    font_size: 25
+                    text: "Put item \non the RFID \nReader"
+                
+                Window_Button:
+                    text : "Reload base"
+                    size_hint_y: 0.2
+                    pos_hint: {'y': 0.5, 'x':0.2}
+                    color: 0, 0, 0, 1
+                    on_release: 
+                        root.dev_base()
+                   
+                
+                
 
 
             
@@ -161,18 +184,18 @@
             size_hint_y : .4
 
             FloatLayout:
-                Renting_Window_Button:
+                Window_Button:
                     text: "Rent"
                     on_release: root.rent_button()
                     background_color: 1, 1, 0, 1          
                         
             FloatLayout:
-                Renting_Window_Button:
+                Window_Button:
                     text: "Scan Student \nCard"
                     on_release: root.scan_student_card_button()
 
             FloatLayout:
-                Renting_Window_Button:
+                Window_Button:
                     text: "Cancel"
                     on_release: root.cancel_button()    
                 
@@ -298,62 +321,65 @@
 <Not_exist_window>:
     dev_name : dev_name
     dev_mac : dev_mac
-    GridLayout:
-        cols : 1
-        Label : 
-            text: "RFID Logger"
-            size_hint_y : .7
 
-        Label : 
-            text: "Add new item"
-            size_hint_y : .7
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'kivy_img/Background.png'
+
+    BoxLayout:
+        halign: 'center'
+        orientation: 'vertical'
+        spacing: 10
+        Label:
+        Image:
+            source: 'kivy_img/LOGO.png'
+
+        Label: 
+            text: "Add new item to database"
+            size_hint_y: .2
+
+        Label:
+            id: dev_id
+            size_hint_y: .2
+            text: "Item ID"
+
+        Label:
+            id: dev_mac
+            size_hint_y: .2
+            text: "Device MAC"
+
+
+        TextInput:
+            size_hint_x : 0.6
+            pos_hint: {'x': 0.2}
+            background_color: (0, 0, 0, 0)
+            id: dev_name
+            multiline: False  
+            hint_text: "______________ New device's name ______________"
+            halign: 'center'
+            on_text_validate:
+                root.empty_value("Device name", dev_name.text)
+
         
-        FloatLayout:
-
-            TextInput:
-                size_hint : 0.6, 0.5
-                pos_hint : {'x':0.2, "y":0.4}
-                id: dev_name
-                multiline: False  
-                hint_text: "New device's name"
-                on_text_validate:
-                    root.empty_value("Device name", dev_name.text)
-
-        FloatLayout:
-
-            Label:
-                size_hint : 0.6, 0.3
-                pos_hint : {'x':0.2, "y":0.4}
-                id: dev_id
-                text: "Device ID"
-
-        FloatLayout:
-
-            Label:
-                size_hint : 0.6, 0.3
-                pos_hint : {'x':0.2, "y":0.4}
-                id: dev_mac
-                text: "Device MAC"
-
         Label:      
 
         GridLayout:
             cols: 2
-            size_hint_y : 1
+            size_hint_y : 0.8
 
             FloatLayout:
-                Button:
+                Window_Button:
                     text: "Add"
-                    size_hint: (.5, .4)
-                    pos_hint : {"top" : 0.7, "right" : 0.7}
+                    color: (0, 0, 0, 1)
                     on_release:
                         root.add_button()
 
             FloatLayout:
-                Button:
+                Window_Button:
                     text: "Cancel"
-                    size_hint: (.5, .4)
-                    pos_hint : {"top" : 0.7, "right" : 0.7}
+                    color: (0, 0, 0, 1)
                     on_release:
                         root.cancel_button()
  

@@ -4,13 +4,15 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from datetime import date, datetime
 from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
-from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 import testy
 import Database as database
 from kivy.config import Config
 from functools import partial ##import partial, wich allows to apply arguments to functions returning a funtion with that arguments by default.
 from kivy.utils import get_color_from_hex
+from kivy.uix.textinput import TextInput
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 
 
 class Main_window(Screen):
@@ -42,7 +44,7 @@ class Main_window(Screen):
                 today = date.today()
                 button_share.background_normal = ""      
                 button_share.color = (0, 0, 0, 1)  
-                if today.strftime("%d-%B-%Y") >= str(self.dev_data[i]["return_date"]):
+                if today >= self.dev_data[i]["return_date"]:
                     button_share.background_color = get_color_from_hex('#FF5733') 
                 else:
                     button_share.background_color = get_color_from_hex('#a6a6a6')
@@ -105,7 +107,6 @@ class Renting_window(Screen):
         
 
         self.dev_name.text = self.dev_data["name"]
-        self.dev_id.text = str(self.dev_data["part_id"])
         self.dev_mac.text = self.dev_data["mac"]
 
         self.us_name.text = self.us_data["name"]
@@ -121,7 +122,7 @@ class Renting_window(Screen):
         """
         datestr = datetime.now()
         try:
-            datestr = datetime.strptime(self.return_date.text, '%Y-%m-%d')
+            datestr = datetime.strptime(self.return_date.text, '%d-%m-%Y')
         except:
             pass
         today = datetime.now()
@@ -181,6 +182,7 @@ class Return_window(Screen):
     def on_enter(self):
         """Get data from database and update internal variables """
         user, part = database.get_order(database.MAC_db)
+        print(user)
         self.user_data = user
         self.dev_data = part  
         
@@ -193,6 +195,7 @@ class Return_window(Screen):
         self.dev_name.text = self.dev_data["name"]
         self.dev_id.text = str(self.dev_data["part_id"])
         self.dev_mac.text = self.dev_data["mac"]
+        print(self.user_data)
         pass
 
     def today(self):
@@ -205,9 +208,9 @@ class Return_window(Screen):
         """Check if written data is correct (format/value bigger than today's date)
             returning if(correct)
         """
-        datestr = datetime.now()
+        datestr = self.today()
         try:
-            datestr = datetime.strptime(self.return_date.text, '%Y-%m-%d')
+            datestr = datetime.strptime(self.return_date.text, '%d-%m-%Y')
         except:
             pass
         today = datetime.now()
@@ -278,25 +281,40 @@ class Not_exist_window(Screen):
 
 def invalid_time():
     """Popup to tell that data is not correct"""
-    pop = Popup(title='Invalid Form',
-                  content=Label(text='Data format incorrect\nPlease use YYYY-MM-DD format'),
-                  size_hint=(None, None), size=(400, 200))
+    box = BoxLayout()
+    box.add_widget(Label(text='Please use DD-MM-YYYY format', halign = 'center'))
+    pop = Popup(title='Data format incorrect',
+                content=box,
+                separator_height = 4,
+                title_size = 19,
+                size_hint=(None, None), size=(400, 300),
+                background= 'kivy_img/NOT_AVAILABLE background.png')
 
     pop.open()
 
 def required_info(info_name):
     """Popup to tell that information written by user is not correct"""
+    box = BoxLayout()
+    box.add_widget(Label(text='This information is required :\n' + info_name, halign = 'center'))
     pop = Popup(title = "Required info",
-                content=Label(text='This information is required :\n' + info_name),
-                size_hint=(None, None), size=(400, 300))
+                content=box,
+                separator_height = 4,
+                title_size = 19,
+                size_hint=(None, None), size=(400, 300),
+                background= 'kivy_img/NOT_AVAILABLE background.png')
 
     pop.open()
 
 def dev_info(arg, trash):
     """Popup with device information"""
+    box = BoxLayout()
+    box.add_widget(Label(text= arg, halign = 'center'))
     pop = Popup(title = "Device info",
-                content=Label(text='Device information:\n' + arg),
-                size_hint=(None, None), size=(400, 200))
+                content=box,
+                separator_height = 4,
+                title_size = 19,
+                size_hint=(None, None), size=(500, 400),
+                background= 'kivy_img/NOT_AVAILABLE background.png')
 
     pop.open()
 
@@ -308,7 +326,7 @@ screens = [Main_window(name="main_screen"), Renting_window(name="renting_screen"
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current="main_screen"
+sm.current="return_screen"
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')   #<no red dots on screen
 

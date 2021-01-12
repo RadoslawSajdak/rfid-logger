@@ -141,6 +141,7 @@ def rent_item(MAC,user):
         uid = cursor.fetchone()[0]
 
     # Make a new order
+    # ERROR DD-MM-YYYY -> should be YYYY-MM-DD
     cursor.execute("INSERT INTO Orders (User_ID, Part_ID,Rented, Return_date) VALUES (%s, %s, %s, %s)",\
         (uid,pid,str(datetime.today().strftime('%Y-%m-%d')),user["return_date"]) )
     db_connection.commit()

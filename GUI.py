@@ -326,7 +326,7 @@ screens = [Main_window(name="main_screen"), Renting_window(name="renting_screen"
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current="return_screen"
+sm.current="main_screen"
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')   #<no red dots on screen
 

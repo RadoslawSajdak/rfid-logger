@@ -1,31 +1,55 @@
 #Global background
+#:import utils kivy.utils
 <Background_Color@Widget>:               
     background_color: 1, 0, 0, 1
     canvas.before:
         Color:
-            rgba: root.background_color
-        Rectangle:
-            size: self.size
+            rgb: utils.get_color_from_hex('#a6a6a6')
+        RoundedRectangle:
             pos: self.pos
+            size: self.size
+            radius: [10,]
 
 
 #Buttons in Renting window -- There must be Float Layout first
-<Renting_Window_Button@Button+Background_Color>:
-    size_hint: (.7, .4)
-    pos_hint : {"top" : 0.7, "right" : 0.9}
+<Botton_RFID@Button+Background_Color>:
+    size_hint: (.6, .4)
+    pos_hint : {"top" : 0.7, "x" : 0.2}
     halign : "center"
+    background_color: 0,0,0,0
+    color: 0, 0, 0, 1
+    font_size: 19
+
+<TextInput_RFID@TextInput>:
+    multiline: False
+    font_size: 19
+    background_color: (0, 0, 0, 0)
+    foreground_color: (1, 1, 1, 1)
+    halign: 'center'
+
+<Label_RFID@Label>:
+    font_size: 19
+
 
 
 <Main_window>:
 
     list :list
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'kivy_img/Background.png'
 
-    GridLayout:
-        cols: 1
+    BoxLayout:
+        halign: 'center'
+        orientation: 'vertical'
+        spacing: 10
+
+        Image:
+            source: 'kivy_img/LOGO.png'
+            size_hint_y: .3
     
-        Label:
-            text: "RFID Logger"
-            size_hint_y : .2
 
         GridLayout:
             cols: 2
@@ -42,16 +66,29 @@
 
 
 
+            BoxLayout:
+                size_hint_x: .3
+                halign: 'center'
+                orientation: 'vertical'
+                spacing: 10
 
-            Label: 
-                size_hint_x : .5
-                text: "Put item on the RFID Reader"
-            
-            Button:
-                size_hint_y : .2
-                text : "Reload base"
-                on_release: 
-                    root.dev_base()
+                
+                Label: 
+                    halign: 'center'
+                    font_size: 25
+                    text: "Put item \non the RFID \nReader"
+                
+                Botton_RFID:
+                    text : "Reload base"
+                    size_hint_y: 0.2
+                    pos_hint: {'y': 0.5, 'x':0.2}
+                    color: 0, 0, 0, 1
+                    on_release: 
+                        root.dev_base()
+        Label:
+            size_hint_y: 0.05
+                
+                
 
 
             
@@ -67,66 +104,72 @@
     us_phone : us_phone
 
     dev_name : dev_name
-    dev_id : dev_id
     dev_mac : dev_mac
     return_date : return_date
 
-    GridLayout:
-        cols: 1
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'kivy_img/Background.png'
 
-        Label:
-            text: "RFID Logger"
-            size_hint_y : .2
+    BoxLayout:
+        halign: 'center'
+        orientation: 'vertical'
+        spacing: 10
 
-        GridLayout:
-            cols: 2
-            spacing: [15]
+        Image:
+            source: 'kivy_img/LOGO.png'
+            size_hint_y: .3
+    
 
-            GridLayout:
-                cols: 2
-                spacing: [15]
+        BoxLayout:
+            halign: 'center'
+            orientation: 'horizontal'
+            spacing: 10
 
-                Label: 
-                    text: "Name"
+
+            BoxLayout:
+                halign: 'center'
+                orientation: 'vertical'
+                spacing: 1
+
                     
-                TextInput:
+                TextInput_RFID:
                     id: us_name
-                    multiline: False
+                    hint_text: "______________ Name ______________"
                     on_text_validate:
                         root.empty_value("Name",us_name.text)
 
-
-                Label: 
-                    text: "Surname"
-                
-                TextInput:
+                    
+                TextInput_RFID:
                     id: us_surname
-                    multiline: False
+                    hint_text: "_____________ Surname _____________"
                     on_text_validate:
                         root.empty_value("Surname",us_surname.text)
 
-                Label: 
-                    text: "Index"
-                
-                TextInput:
+                    
+                TextInput_RFID:
                     id: us_index
-                    multiline: False
+                    hint_text: "_______________ Index _______________"
 
-                Label: 
-                    text: "E-mail"
-                
-                TextInput:
+                    
+                TextInput_RFID:
                     id: us_email
-                    multiline: False
+                    hint_text: "______________  E-mail  ______________"
                     on_text_validate:
                         root.empty_value("E-mail",us_email.text)
 
-                Label: 
-                    text: "Phone"
-                
-                TextInput:
+                    
+                TextInput_RFID:
                     id: us_phone
-                    multiline: False
+                    hint_text: "______________  Phone  ______________"
+
+                TextInput_RFID:
+                    id: return_date
+                    hint_text: "_____ Return date <DD-MM-YYYY> _____"
+                    on_text_validate:
+                        root.check_date()
                 
 
             GridLayout:
@@ -134,45 +177,39 @@
                 size_hint_x : .8
 
                 Label:
+
+                Label_RFID:
                     id: dev_name
                     text: "Item name"
 
-                Label:
-                    id: dev_id
-                    text: "Item ID"
-
-                Label:
+                Label_RFID:
                     id: dev_mac
                     text: "Item MAC"
 
-                Label:
-                    text: root.today()
-                    
+                Label_RFID:
+                    text: "Today's date:  " + root.today()
 
-                TextInput:
-                    id: return_date
-                    multiline: False  
-                    hint_text: "Date of return <YYYY-MM-DD>"
-                    on_text_validate:
-                        root.check_date()
+                Label:
+                        
+
+                
 
         GridLayout:
             cols: 3
             size_hint_y : .4
 
             FloatLayout:
-                Renting_Window_Button:
+                Botton_RFID:
                     text: "Rent"
-                    on_release: root.rent_button()
-                    background_color: 1, 1, 0, 1          
+                    on_release: root.rent_button()     
                         
             FloatLayout:
-                Renting_Window_Button:
+                Botton_RFID:
                     text: "Scan Student \nCard"
                     on_release: root.scan_student_card_button()
 
             FloatLayout:
-                Renting_Window_Button:
+                Botton_RFID:
                     text: "Cancel"
                     on_release: root.cancel_button()    
                 
@@ -195,101 +232,135 @@
     dev_date : dev_date
     return_date : return_date
     return_button_id : return_button_id
-    GridLayout:
-        cols: 1
-        
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'kivy_img/Background.png'
+
+    BoxLayout:
+        halign: 'center'
+        orientation: 'vertical'
+        spacing: 10
+
+        Image:
+            source: 'kivy_img/LOGO.png'
+            size_hint_y: .3
+
         Label:
-            text: "RFID Logger"
-            size_hint_y : .2
+            size_hint_y: .05
+    
 
-        FloatLayout:
-            GridLayout:
-                cols: 2
-                spacing: [15]
-                size_hint: (.8, .7)
-                pos_hint : {"x" : 0.1, "y" : 0.2}
-
-                GridLayout:
-                    cols: 1
-                    spacing: [15]
-
-                    Label: 
-                        id: us_name
-                        text: "Name"
-                        text_size: self.width, None
-
-                    Label: 
-                        id: us_surname
-                        text: "Surname"
-                        text_size: self.width, None
-
-                    Label: 
-                        id: us_index
-                        text: "Index"
-                        text_size: self.width, None
-
-                    Label: 
-                        id: us_email
-                        text: "E-mail"
-                        text_size: self.width, None
-
-                    Label: 
-                        id: us_phone
-                        text: "Phone"
-                        text_size: self.width, None
+        BoxLayout:
+            halign: 'center'
+            orientation: 'horizontal'
+            spacing: 10
 
 
-                GridLayout:
-                    cols: 1
-                    spacing: [15]
+            BoxLayout:
+                halign: 'center'
+                orientation: 'vertical'
+                spacing: 1
 
-                    Label: 
-                        id: dev_name
-                        text: "Name"
+                Label_RFID: 
+                    id: us_name
+                    text: "Name"
+                    size_hint_y: .3
 
-                    Label: 
-                        id: dev_id
-                        text: "ID"
+                Label_RFID: 
+                    id: us_surname
+                    text: "Surname"
+                    size_hint_y: .3
 
-                    Label: 
-                        id: dev_mac
-                        text: "MAC"
+                Label_RFID: 
+                    id: us_index
+                    text: "Index"
+                    size_hint_y: .3
 
-                    Label: 
-                        id: dev_date
-                        text: root.today()
+                Label_RFID: 
+                    id: us_email
+                    text: "E-mail"
+                    size_hint_y: .3
 
-                    TextInput: 
-                        id: return_date
-                        multiline: False  
-                        hint_text: "Date of return <YYYY-MM-DD>"
-                        on_text_validate:
-                            root.check_date()
+                Label_RFID: 
+                    id: us_phone
+                    text: "Phone"
+                    size_hint_y: .3
+                
+                Label:
+                    
+
+            BoxLayout:
+                halign: 'center'
+                orientation: 'vertical'
+
+                Label:
+
+                TextInput_RFID: 
+                    id: return_date
+                    hint_text: "_ Prologue <DD-MM-YYYY> _"
+                    on_text_validate:
+                        root.check_date()
+
+                Label:     
+                    size_hint_y: .4   
+
+                FloatLayout:
+                    Botton_RFID:
+                        id: return_button_id
+                        text: "Return"
+                        size_hint: (.9, .4)
+                        pos_hint: {"top" : 0.4, "x" : 0.05}
+                        on_release: 
+                            root.return_button()
+                
+                
+                FloatLayout:
+                    
+                    Botton_RFID:
+                        text: "Cancel"
+                        size_hint: (.9, .4)
+                        pos_hint: {"top" : 0.9, "x" : 0.05}
+                        on_release: 
+                            root.cancel_button()    
+
+                Label:  
+                    size_hint_y: .4
 
 
 
 
-        GridLayout:
-            cols: 2
-            size_hint_y : .2
+            BoxLayout:
+                halign: 'center'
+                orientation: 'vertical'
+                spacing: 1
 
-            FloatLayout:
-                Button:
-                    id: return_button_id
-                    text: "Return"
-                    size_hint: (.5, .4)
-                    pos_hint : {"top" : 0.7, "right" : 0.7}
-                    on_release: 
-                        root.return_button()
+                Label_RFID: 
+                    id: dev_name
+                    text: "Name"
+                    size_hint_y: .3
 
-            FloatLayout:
-                Button:
-                    text: "Cancel"
-                    size_hint: (.5, .4)
-                    pos_hint : {"top" : 0.7, "right" : 0.7}
-                    on_release: 
-                        root.cancel_button()      
+                Label_RFID: 
+                    id: dev_id
+                    text: "ID"
+                    size_hint_y: .3
 
+                Label_RFID: 
+                    id: dev_mac
+                    text: "MAC"
+                    size_hint_y: .3
+
+                Label_RFID: 
+                    id: dev_date
+                    text: root.today()
+                    size_hint_y: .3
+                
+                Label:
+
+
+
+            
 
 
 
@@ -298,62 +369,60 @@
 <Not_exist_window>:
     dev_name : dev_name
     dev_mac : dev_mac
-    GridLayout:
-        cols : 1
-        Label : 
-            text: "RFID Logger"
-            size_hint_y : .7
 
-        Label : 
-            text: "Add new item"
-            size_hint_y : .7
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'kivy_img/Background.png'
+
+    BoxLayout:
+        halign: 'center'
+        orientation: 'vertical'
+        spacing: 10
+        Label:
+        Image:
+            source: 'kivy_img/LOGO.png'
+
+        Label_RFID: 
+            text: "Add new item to database"
+            size_hint_y: .2
+
+        Label_RFID:
+            id: dev_id
+            size_hint_y: .2
+            text: "Item ID"
+
+        Label_RFID:
+            id: dev_mac
+            size_hint_y: .2
+            text: "Device MAC"
+
+
+        TextInput_RFID:
+            size_hint_x : 0.6
+            pos_hint: {'x': 0.2}
+            id: dev_name
+            hint_text: "______________ New device's name ______________"
+            on_text_validate:
+                root.empty_value("Device name", dev_name.text)
+
         
-        FloatLayout:
-
-            TextInput:
-                size_hint : 0.6, 0.5
-                pos_hint : {'x':0.2, "y":0.4}
-                id: dev_name
-                multiline: False  
-                hint_text: "New device's name"
-                on_text_validate:
-                    root.empty_value("Device name", dev_name.text)
-
-        FloatLayout:
-
-            Label:
-                size_hint : 0.6, 0.3
-                pos_hint : {'x':0.2, "y":0.4}
-                id: dev_id
-                text: "Device ID"
-
-        FloatLayout:
-
-            Label:
-                size_hint : 0.6, 0.3
-                pos_hint : {'x':0.2, "y":0.4}
-                id: dev_mac
-                text: "Device MAC"
-
         Label:      
 
         GridLayout:
             cols: 2
-            size_hint_y : 1
+            size_hint_y : 0.8
 
             FloatLayout:
-                Button:
+                Botton_RFID:
                     text: "Add"
-                    size_hint: (.5, .4)
-                    pos_hint : {"top" : 0.7, "right" : 0.7}
                     on_release:
                         root.add_button()
 
             FloatLayout:
-                Button:
+                Botton_RFID:
                     text: "Cancel"
-                    size_hint: (.5, .4)
-                    pos_hint : {"top" : 0.7, "right" : 0.7}
                     on_release:
                         root.cancel_button()
  

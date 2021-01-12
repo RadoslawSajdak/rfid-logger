@@ -59,7 +59,7 @@ def check_mac(MAC):
         return "INPUT_ERROR"
 
 
-def get_order(MAC):
+def get_order(MAC): #####TODO  Check order
     """ Function to associate MAC of rented item with user. Function returns completly infos about
         user and item too as dictionaries.
 

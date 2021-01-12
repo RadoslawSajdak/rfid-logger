@@ -120,9 +120,9 @@ class Renting_window(Screen):
         """Check if written data is correct (format/value bigger than today's date)
             returning if(correct)
         """
-        datestr = datetime.now()
+        datestr = self.today()
         try:
-            datestr = datetime.strptime(self.return_date.text, '%d-%m-%Y')
+            datestr = datetime.strptime(self.return_date.text, '%Y-%m-%d')
         except:
             pass
         today = datetime.now()
@@ -133,7 +133,7 @@ class Renting_window(Screen):
     def today(self):
         """Get actual date"""
         today = date.today()
-        return today.strftime("%d-%B-%Y")
+        return today.strftime("%Y-%B-%d")
 
     def empty_value(self, value_type, value):
         """Check if value is empty - some data are required
@@ -202,7 +202,7 @@ class Return_window(Screen):
         """Get actual date"""
         today = date.today()
         print(today)
-        return today.strftime("%d-%B-%Y")
+        return today.strftime("%Y-%B-%d")
 
     def check_date(self):
         """Check if written data is correct (format/value bigger than today's date)
@@ -210,7 +210,7 @@ class Return_window(Screen):
         """
         datestr = self.today()
         try:
-            datestr = datetime.strptime(self.return_date.text, '%d-%m-%Y')
+            datestr = datetime.strptime(self.return_date.text, '%y-%m-%d')
         except:
             pass
         today = datetime.now()
@@ -282,7 +282,7 @@ class Not_exist_window(Screen):
 def invalid_time():
     """Popup to tell that data is not correct"""
     box = BoxLayout()
-    box.add_widget(Label(text='Please use DD-MM-YYYY format', halign = 'center'))
+    box.add_widget(Label(text='Please use YYYY-MM-DD format', halign = 'center'))
     pop = Popup(title='Data format incorrect',
                 content=box,
                 separator_height = 4,
@@ -326,7 +326,7 @@ screens = [Main_window(name="main_screen"), Renting_window(name="renting_screen"
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current="main_screen"
+sm.current="renting_screen"
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')   #<no red dots on screen
 

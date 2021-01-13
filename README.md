@@ -9,7 +9,8 @@ We're going to build main device on raspberry pi 4. It gives us a lot of computi
 ### PN532 on Raspberry Pi 4
 <img src="https://botland.com.pl/64035-thickbox_default/modul-rfidnfc-pn532-1356mhz-i2cspi-karta-i-brelok.jpg" alt="PN532 Module" width="200" height="200">  
   
-#### Connection with SPI
+### Connection with SPI
+This connection based on producent documentation for Raspberry Pi 4 [SITE](https://www.raspberrypi.org/documentation/usage/gpio/)
 | PN532 module | Raspberry |
 |:------------:|:---------:|
 |     VCC      |    3.3V   |
@@ -21,7 +22,25 @@ We're going to build main device on raspberry pi 4. It gives us a lot of computi
 
 **Don't forget to switch switches to 0 1 position!**
 
+### Automatic installation
+You should install raspbian with desktop from [PRODUCENT SITE](https://www.raspberrypi.org/software/operating-systems/#raspberry-pi-os-32-bit)
 
+After that, you have to enable SSH and add raspbery to your network. You can use this tutorial: [Tutorial](https://www.raspberrypi-spy.co.uk/2017/04/manually-setting-up-pi-wifi-using-wpa_supplicant-conf/)
+
+First You should download our shell code (Logger_install.sh). You can send it to your raspberry with SCP:  
+ - scp user/Desktop/Logger_install.sh pi@192.168.0.155:~/.   
+
+The next step is set it's privilages with:  
+ - _sudo chmod 777_ Logger_install.sh .
+  
+After that you should **Manually** set VNC.  
+ - _sudo raspi-config_ -> _Interfacing options_ -> _VNC_ -> _Yes_
+
+The next step is to run out script with  
+ - ./Logger_install.sh
+
+Finally you can connect to raspberry with VNC client and use our app.  
+ - _python3 rfid-logger/Main.py_
 ## Database 
 
 <img src="./Graphics/base.png" alt="Database structure">

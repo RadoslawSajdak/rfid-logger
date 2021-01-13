@@ -226,7 +226,7 @@ class Return_window(Screen):
         """
         if self.return_button_id.text == "Prologue":
             #Device prologue
-            #database.prologue(self.dev_data["part_id"], self.return_date )             #TODO (NEW RETURN DATE) BREAKPOINT    prologue
+            database.prologue(self.dev_data["part_id"], self.return_date.text )             #TODO (NEW RETURN DATE) BREAKPOINT    prologue
             sm.transition.direction = "down"
             sm.current = "main_screen"
         else:

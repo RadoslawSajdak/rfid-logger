@@ -196,8 +196,13 @@ def prologue(part_id,date):
 
     sql = "UPDATE Orders SET Return_date = '" + str(date) + "' WHERE Part_ID = '" + str(part_id) +"' AND Available = 'NotReturned'" #TODO NotReturned -> NOT_RETURNED
     cursor.execute(sql)
-
     db_connection.commit()
+
+    sql = "UPDATE Parts SET Return_date = '" + str(date) + "' WHERE Part_ID = '" + str(part_id)+"'"
+
+    cursor.execute(sql)
+    db_connection.commit()
+
 def return_item(MAC):
     cp_mac = (check_mac(MAC),)
     db_connection = setup()

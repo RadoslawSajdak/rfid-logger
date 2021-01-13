@@ -4,6 +4,7 @@ from datetime import datetime
 
 MAC_db = "F7:9F:CB:A6"
 
+
 def setup():
     """ It gives You connection to database """
     db_connection = mysql.connect(host=const.HOST, database=const.DATABASE, user=const.USER, password=const.PASSWORD)
@@ -134,9 +135,17 @@ def rent_item(MAC,user):
         db_connection.commit()
 
     except:
-        cursor.execute("INSERT INTO Users (Name, Surname, StudentID, Email, Phone) VALUES (%s, %s,%s, %s,%s)",\
-           (user["name"],user["surname"],user["student_id"],user["email"],user["phone"]))
-        db_connection.commit()
+        
+        cursor.execute("SELECT User_ID FROM Users WHERE MAC = %s", (user["mac"],) )
+        temp_uid = cursor.fetchall()[0]
+
+        if temp_uid  is not None:
+            cursor.execute("UPDATE Users SET Email = '" + str(user["email"]) + "' WHERE MAC = %s",(user["mac"],))
+            db_connection.commit()
+        else:
+            cursor.execute("INSERT INTO Users (Name, Surname, StudentID,MAC, Email, Phone) VALUES (%s, %s,%s, %s,%s, %s)",\
+            (user["name"],user["surname"], user["student_id"], user["mac"], user["email"], user["phone"]))
+            db_connection.commit()
         cursor.execute("SELECT User_ID FROM Users WHERE Email = %s", (user["email"],) )
         uid = cursor.fetchone()[0]
 
@@ -171,6 +180,33 @@ def get_one_part(MAC):
     single_part["name"] = part_t[2]
     return single_part
 
+def get_user(MAC):
+    
+    db_connection = setup()
+    cursor = db_connection.cursor()
+
+    person = {}
+    try: 
+        cursor.execute("SELECT * FROM Users WHERE MAC = %s", (check_mac(MAC),))
+        user = cursor.fetchone()
+        print(user)
+        person["user_id"] = user[0]
+        person["name"] = user[1]
+        person["surname"] = user[2]
+        person["student_id"] = user[3]
+        person["mac"] = user[4]
+        person["email"] = user[5]
+        person["phone"] = user[6]
+    except:
+        person["user_id"] = ""
+        person["name"] = ""
+        person["surname"] = ""
+        person["student_id"] = ""
+        person["mac"] = check_mac(MAC)
+        person["email"] = ""
+        person["phone"] = ""
+    return person
+
 def get_all_devices():
     single_part = {}
     parts_dictionary = []
@@ -187,7 +223,7 @@ def get_all_devices():
         single_part["status"] = i[3] # It is not necessary to use
         single_part["return_date"] = i[4]
         parts_dictionary.append(single_part.copy())
-        print(parts_dictionary)
+        
     return parts_dictionary
 
 def prologue(part_id,date):
@@ -231,7 +267,7 @@ def get_order_info(part_id):
     
     db_connection = setup()
     cursor = db_connection.cursor()
-    cursor.execute("SELECT Users.name, Users.surname, Users.email, Users.phone FROM Users, Orders WHERE Orders.User_ID = Users.User_ID AND Orders.Part_ID = " + str(part_id))
+    cursor.execute("SELECT Users.name, Users.surname, Users.email, Users.phone FROM Users, Orders WHERE Orders.User_ID = Users.User_ID AND Orders.Part_ID = " + str(part_id) + " AND Orders.Available = 'NotReturned'")
     part = cursor.fetchone()
 
     information['name']=part[0]

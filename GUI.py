@@ -15,6 +15,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 
+from Logger import loop
+
 
 class Main_window(Screen):
     """Main window design and functionality"""
@@ -99,6 +101,7 @@ class Renting_window(Screen):
             "name" : "",
             "surname" : "",
             "student_id" : "",
+            "mac" : "",
             "email" : "",
             "phone" : ""}
 
@@ -123,7 +126,7 @@ class Renting_window(Screen):
         """Check if written data is correct (format/value bigger than today's date)
             returning if(correct)
         """
-        datestr = self.today()
+        datestr = datetime.now()
         try:
             datestr = datetime.strptime(self.return_date.text, '%Y-%m-%d')
         except:
@@ -160,15 +163,18 @@ class Renting_window(Screen):
             self.correct = self.check_date() 
         if (self.correct) :
             self.renting_user={"name":self.us_name.text, "surname": self.us_surname.text, "student_id": self.us_index.text, \
-                "email" : self.us_email.text, "phone" : self.us_phone.text, "return_date" : self.return_date.text}
+                "email" : self.us_email.text, "phone" : self.us_phone.text, "return_date" : self.return_date.text, "mac" : self.us_data["mac"]}
             database.rent_item(database.MAC_db, self.renting_user)
             sm.current= "main_screen"
             sm.transition.direction = "right"
 
     def scan_student_card_button(self):
-        ##TODO your function - scaning ID
-        self.us_data["name"] = "Radosław"
-        #self.us_data =      #<<TODO information from base 
+        
+        print("Scanning")
+        usr = database.get_user(database.check_mac(loop(False)))
+        print(usr)
+        self.us_data = usr
+        print(self.us_data)
         self.on_enter()
         pass
 
@@ -226,7 +232,7 @@ class Return_window(Screen):
         """
         if self.return_button_id.text == "Prologue":
             #Device prologue
-            database.prologue(self.dev_data["part_id"], self.return_date.text )             #TODO (NEW RETURN DATE) BREAKPOINT    prologue
+            database.prologue(self.dev_data["part_id"], self.return_date.text )             
             sm.transition.direction = "down"
             sm.current = "main_screen"
         else:

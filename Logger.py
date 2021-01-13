@@ -1,8 +1,8 @@
-#from pn532pi import Pn532Spi,Pn532, pn532
+from pn532pi import Pn532Spi,Pn532, pn532
 import time
 
-#PN532_SPI = Pn532Spi(Pn532Spi.SS0_GPIO8)
-#nfc = Pn532(PN532_SPI)
+PN532_SPI = Pn532Spi(Pn532Spi.SS0_GPIO8)
+nfc = Pn532(PN532_SPI)
 
 def setup():
     """ Init function for RFID. Should be called at the beggining of the code but just once. """
@@ -10,6 +10,9 @@ def setup():
     time.sleep(1)
     a = nfc.getFirmwareVersion() #Check if device is working well TODO: protection like try/except
     time.sleep(1)
+    while (str((a >> 16) & 0xFF) + "." + str((a >> 8) & 0xFF)) != "1.6":
+        a = nfc.getFirmwareVersion() #Check if device is working well TODO: protection like try/except
+        time.sleep(0.2)
     print("Firmware version: ",(a >> 16) & 0xFF,".",(a >> 8) & 0xFF)
     nfc.setPassiveActivationRetries(0xFF)
     time.sleep(1)
@@ -32,10 +35,11 @@ def read_once():
     nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106KBPS)
 
 # Reading in infinite loop
-def loop():
+def loop(infinite_wait):
     """
     Reading loop. Returns MAC in AA:AA:AA:AA format. 
     """
+    ticks = 0
     while(1):
         success, uid_t = nfc.readPassiveTargetID(pn532.PN532_MIFARE_ISO14443A_106KBPS)
         if (success):
@@ -51,6 +55,11 @@ def loop():
             uid = uid.upper()
             print("Card found!", uid)
             return uid
+        else:
+            ticks += 1
+            time.sleep(0.01)
+            if ticks > 200 and infinite_wait is False: # Maximum time of waiting for loop
+                return ""
 
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@ from kivy.utils import get_color_from_hex
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
+from kivy.uix.image import Image
 
 
 class Main_window(Screen):
@@ -29,34 +30,36 @@ class Main_window(Screen):
             button_share = Button(pos_hint={"x": 0, "top": top_button_share},
                             size_hint_y=None, 
                             height=40)
-            spaces = 70*" "
+            spaces = 70*" "                                     #Device information buffor
             dev_information = str(self.dev_data[i]["name"])
             if self.dev_data[i]["status"]=="AVAILABLE":
                 dev_information += spaces[len(str(self.dev_data[i]["name"])): -len(str(self.dev_data[i]["status"]))]      
                 dev_information += str(self.dev_data[i]["status"])     
                 button_share.background_color = get_color_from_hex('#6FAF8B') 
                 button_share.background_normal = ""      
-                button_share.color = (0, 0, 0, 1)                            
+                button_share.color = (0, 0, 0, 1)   
+
             else:
                 dev_information += spaces[len(str(self.dev_data[i]["name"])): -len(str(self.dev_data[i]["return_date"]))]    
                 dev_information += "    "
                 dev_information += str(self.dev_data[i]["return_date"]) 
-                today = date.today()
+                
                 button_share.background_normal = ""      
                 button_share.color = (0, 0, 0, 1)  
+
+                today = date.today()
                 if today >= self.dev_data[i]["return_date"]:
                     button_share.background_color = get_color_from_hex('#FF5733') 
                 else:
                     button_share.background_color = get_color_from_hex('#a6a6a6')
-                        
+            
+            button_callback = partial(dev_info_pop, self.dev_data[i])        #Send argument to function
+            button_share.bind(on_press = button_callback)            
 
             button_share.text = dev_information
 
-            device = "Name: %s \nMAC: %s \n + Whatever you want" % (self.dev_data[i]['name'], self.dev_data[i]['mac'])
-            button_callback = partial(dev_info, device)        #Send argument to function
-            button_share.bind(on_press = button_callback)  
-
             self.ids.list.add_widget(button_share)
+
 
     def on_enter(self):
         """Update local values"""
@@ -182,7 +185,6 @@ class Return_window(Screen):
     def on_enter(self):
         """Get data from database and update internal variables """
         user, part = database.get_order(database.MAC_db)
-        print(user)
         self.user_data = user
         self.dev_data = part  
         
@@ -195,13 +197,11 @@ class Return_window(Screen):
         self.dev_name.text = self.dev_data["name"]
         self.dev_id.text = str(self.dev_data["part_id"])
         self.dev_mac.text = self.dev_data["mac"]
-        print(self.user_data)
-        pass
+
 
     def today(self):
         """Get actual date"""
         today = date.today()
-        print(today)
         return today.strftime("%Y-%B-%d")
 
     def check_date(self):
@@ -210,7 +210,7 @@ class Return_window(Screen):
         """
         datestr = self.today()
         try:
-            datestr = datetime.strptime(self.return_date.text, '%y-%m-%d')
+            datestr = datetime.strptime(self.return_date.text, '%Y-%m-%d')
         except:
             pass
         today = datetime.now()
@@ -305,15 +305,36 @@ def required_info(info_name):
 
     pop.open()
 
-def dev_info(arg, trash):
-    """Popup with device information"""
-    box = BoxLayout()
-    box.add_widget(Label(text= arg, halign = 'center'))
+def dev_info_pop(device_info, trash):               
+    """Popup with device information
+        Input:
+        device_info - information about device in dictionary form
+        trash - pointer to kivy instance
+    """
+    box = BoxLayout(orientation = 'vertical')
+    dev_description = "Name: " + device_info['name'] +"\nMAC: " + device_info['mac']
+    
+    if device_info['status'] != 'AVAILABLE':
+        owner_info = database.get_order_info(device_info['part_id'])
+        dev_description += \
+            "\nName: " + owner_info['name']+\
+            "\nSurname: "+ owner_info['surname']+\
+            "\nE-mail: " + owner_info['email']+\
+            "\nPhone: " + owner_info['phone']+\
+            "\nDate of return: " + str(device_info['return_date'])
+
+        
+
+    box.add_widget(Label(text= dev_description, halign = 'center'))
+    logo = Image(source='kivy_img/LOGO.png')
+    logo.size_hint = (0.8, 0.8)
+    logo.pos_hint = {'x' : 0.1}
+    box.add_widget(logo)
     pop = Popup(title = "Device info",
                 content=box,
                 separator_height = 4,
                 title_size = 19,
-                size_hint=(None, None), size=(500, 400),
+                size_hint=(None, None), size=(400, 300),
                 background= 'kivy_img/NOT_AVAILABLE background.png')
 
     pop.open()
@@ -326,12 +347,13 @@ screens = [Main_window(name="main_screen"), Renting_window(name="renting_screen"
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current="renting_screen"
+sm.current="main_screen"
 
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')   #<no red dots on screen
 
-class Rfid_App(App):
+class RFID_LoggerApp(App):
     """Main aplication class - must have"""
     def build(self):
+        
         return sm
     

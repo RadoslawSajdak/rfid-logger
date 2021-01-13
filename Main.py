@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 import Logger as nfc
 import Database as database
@@ -38,21 +38,21 @@ def check_item(MAC):
 def app_thread():
     while True:
         print("Read")
-        nfc.read_once()
-        #database.MAC_db = input()
-        GPIO.wait_for_edge(16, GPIO.FALLING)
-        database.MAC_db = nfc.loop()
+        #nfc.read_once()
+        database.MAC_db = input()
+        #GPIO.wait_for_edge(16, GPIO.FALLING)
+        #database.MAC_db = nfc.loop()
         check_item(database.MAC_db)
         print("Read Done!")
         time.sleep(2)
 
 
 if __name__ == "__main__":
-    nfc.setup()
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    #nfc.setup()
+    #GPIO.setmode(GPIO.BCM)
+    #GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     thrd = threading.Thread(target=app_thread)
     thrd.start()
-    app.Rfid_App().run()
+    app.RFID_LoggerApp().run()
 
 

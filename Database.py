@@ -89,12 +89,12 @@ def get_order(MAC): #####TODO  Check order
 
     cursor.execute("SELECT * FROM Users WHERE User_ID = %s", (renting_person["user_id"],))
     user = cursor.fetchone()
- 
+
     renting_person["name"] = user[1]
     renting_person["surname"] = user[2]
     renting_person["student_id"] = user[3]
-    renting_person["email"] = user[4]
-    renting_person["phone"] = user[5]
+    renting_person["email"] = user[5]
+    renting_person["phone"] = user[6]
 
     return [renting_person, rented_part]
 
@@ -217,7 +217,21 @@ def return_item(MAC):
     cursor.execute(sql) #TODO Returned->RETURNED
     db_connection.commit()
 
-
+def get_order_info(part_id):
+    information = {}
+    
+    db_connection = setup()
+    cursor = db_connection.cursor()
+    cursor.execute("SELECT Users.name, Users.surname, Users.email, Users.phone FROM Users, Orders WHERE Orders.User_ID = Users.User_ID AND Orders.Part_ID = " + str(part_id))
+    part = cursor.fetchone()
+    print(part[0])
+    print(type(part))
+    information['name']=part[0]
+    information['surname']=part[1]
+    information['email']=part[2]
+    information['phone']=part[3]
+    print(part)
+    return information
 
 
 if __name__ == "__main__":

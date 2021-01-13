@@ -1,8 +1,8 @@
-from pn532pi import Pn532Spi,Pn532, pn532
+#from pn532pi import Pn532Spi,Pn532, pn532
 import time
 
-PN532_SPI = Pn532Spi(Pn532Spi.SS0_GPIO8)
-nfc = Pn532(PN532_SPI)
+#PN532_SPI = Pn532Spi(Pn532Spi.SS0_GPIO8)
+#nfc = Pn532(PN532_SPI)
 
 def setup():
     """ Init function for RFID. Should be called at the beggining of the code but just once. """

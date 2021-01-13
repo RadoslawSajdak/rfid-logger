@@ -314,6 +314,7 @@ def dev_info_pop(device_info, trash):
     box = BoxLayout(orientation = 'vertical')
     dev_description = "Name: " + device_info['name'] +"\nMAC: " + device_info['mac']
     
+    #Get sprcial data for not available device
     if device_info['status'] != 'AVAILABLE':
         owner_info = database.get_order_info(device_info['part_id'])
         dev_description += \
@@ -324,7 +325,7 @@ def dev_info_pop(device_info, trash):
             "\nDate of return: " + str(device_info['return_date'])
 
         
-
+    #Add label and logo
     box.add_widget(Label(text= dev_description, halign = 'center'))
     logo = Image(source='kivy_img/LOGO.png')
     logo.size_hint = (0.8, 0.8)
@@ -334,7 +335,7 @@ def dev_info_pop(device_info, trash):
                 content=box,
                 separator_height = 4,
                 title_size = 19,
-                size_hint=(None, None), size=(400, 300),
+                size_hint=(None, None), size=(400, 350),
                 background= 'kivy_img/NOT_AVAILABLE background.png')
 
     pop.open()

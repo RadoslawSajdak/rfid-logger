@@ -218,19 +218,22 @@ def return_item(MAC):
     db_connection.commit()
 
 def get_order_info(part_id):
+    """ Get information about user based on rented part
+        Input: rented part id
+    """
+    
     information = {}
     
     db_connection = setup()
     cursor = db_connection.cursor()
     cursor.execute("SELECT Users.name, Users.surname, Users.email, Users.phone FROM Users, Orders WHERE Orders.User_ID = Users.User_ID AND Orders.Part_ID = " + str(part_id))
     part = cursor.fetchone()
-    print(part[0])
-    print(type(part))
+
     information['name']=part[0]
     information['surname']=part[1]
     information['email']=part[2]
     information['phone']=part[3]
-    print(part)
+
     return information
 
 

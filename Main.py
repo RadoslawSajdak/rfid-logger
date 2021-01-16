@@ -15,7 +15,7 @@ def check_item(MAC):
     nothing will happen.
     """
     status = database.get_status(MAC)
-    app.Main_window.nfc_detection(status)
+    app.nfc_detection(status)
     
     # if status == "NOT_AVAILABLE":
     #     print("SWITCH_TO_RETURN_SCREEN")
@@ -44,6 +44,10 @@ def app_thread():
             print(app.sm.current)
             database.MAC_db = nfc.loop(True)
             check_item(database.MAC_db)
+            time.sleep(1)
+        elif app.sm.current == "renting_screen":
+            print(app.sm.current)
+            database.MAC_user = nfc.loop(True)
             time.sleep(1)
 
 

@@ -3,6 +3,7 @@ import const
 from datetime import datetime
 
 MAC_db = "F7:9F:CB:A6"
+MAC_user = ""
 
 
 def setup():
@@ -137,15 +138,19 @@ def rent_item(MAC,user):
     except:
         
         cursor.execute("SELECT User_ID FROM Users WHERE MAC = %s", (user["mac"],) )
-        temp_uid = cursor.fetchall()[0]
-
-        if temp_uid  is not None:
+        temp_uid = cursor.fetchall()
+        print(temp_uid)
+        print(type(temp_uid))
+        print(len(temp_uid))
+        
+        if len(temp_uid)  != 0:
             cursor.execute("UPDATE Users SET Email = '" + str(user["email"]) + "' WHERE MAC = %s",(user["mac"],))
             db_connection.commit()
         else:
             cursor.execute("INSERT INTO Users (Name, Surname, StudentID,MAC, Email, Phone) VALUES (%s, %s,%s, %s,%s, %s)",\
             (user["name"],user["surname"], user["student_id"], user["mac"], user["email"], user["phone"]))
             db_connection.commit()
+
         cursor.execute("SELECT User_ID FROM Users WHERE Email = %s", (user["email"],) )
         uid = cursor.fetchone()[0]
 

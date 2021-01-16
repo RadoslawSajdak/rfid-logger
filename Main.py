@@ -40,14 +40,15 @@ def app_thread():
         #nfc.read_once()
         #database.MAC_db = input()
         #GPIO.wait_for_edge(16, GPIO.FALLING)
+        scanned_MAC = nfc.loop(True)
         if app.sm.current == "main_screen":
             print(app.sm.current)
-            database.MAC_db = nfc.loop(True)
+            database.MAC_db = scanned_MAC
             check_item(database.MAC_db)
             time.sleep(1)
         elif app.sm.current == "renting_screen":
             print(app.sm.current)
-            database.MAC_user = nfc.loop(True)
+            database.MAC_user = scanned_MAC
             time.sleep(1)
 
 

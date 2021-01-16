@@ -8,6 +8,7 @@ Users = {
     "name" : "",
     "surname" : "",
     "student_id" : "",
+    "mac" : "",
     "email" : "radzio@gmail.cos",
     "phone" : ""}
 

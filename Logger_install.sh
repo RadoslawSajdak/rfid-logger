@@ -32,7 +32,6 @@ sudo apt-get install -y \
 ## We need to clone repo with all program data and settings. Sudo is  required because we're going to replace system file ##
 git clone https://gitlab.com/sajdak.radoslaw/rfid-logger.git
 cd rfid-logger
-git checkout MatKozyra52
 sudo cp libnfc.conf /etc/nfc/libnfc.conf
 
 ##  This library is used for database. We mainly use cursor, fetch and commit functions ##

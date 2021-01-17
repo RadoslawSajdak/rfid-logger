@@ -55,6 +55,12 @@ sudo sed -i 's/self._spi.cshigh = False/self._spi.cshigh = True/g' /usr/local/li
 sudo echo "" | sudo tee -a /boot/config.txt
 sudo echo "hdmi_force_hotplug=1" | sudo tee -a /boot/config.txt
 
+## Script for running app from desktop
+echo -n "#!" > ~/Desktop/RFID_logger_run.sh
+echo "/bin/bash" >> ~/Desktop/RFID_logger_run.sh
+echo "python3 ~/rfid-logger/Main.py" >> ~/Desktop/RFID_logger_run.sh
+
+chmod 777 ~/Desktop/RFID_logger_run.sh
 ## Reboot is required to apply all changes ##
 sudo reboot
 

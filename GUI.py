@@ -5,7 +5,6 @@ from datetime import date, datetime
 from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
-import testy
 import Database as database
 from kivy.config import Config
 from functools import partial ##import partial, wich allows to apply arguments to functions returning a funtion with that arguments by default.

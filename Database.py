@@ -86,7 +86,7 @@ def get_order(MAC):
     rented_part["return_date"] = part[4]
 
     # Get current owner info #
-    cursor.execute("SELECT User_ID FROM Orders WHERE Part_ID = %s AND Available = 'NotReturned'", (part[0],) ) 
+    cursor.execute("SELECT User_ID FROM Orders WHERE Part_ID = %s AND Available = 'NOT_RETURNED'", (part[0],) ) 
     uid = cursor.fetchone()
 
     renting_person["user_id"] = uid[0]
@@ -252,11 +252,9 @@ def prologue(part_id,date):
     db_connection = setup()
     cursor = db_connection.cursor()
 
-    #sql = "UPDATE Orders SET Return_date = '" + str(date) + "' WHERE Part_ID = '" + str(part_id) +"' AND Available = 'NotReturned'" 
-    cursor.execute("UPDATE Orders SET Return_date = %s WHERE Part_ID = %s AND Available = 'NotReturned'", (str(date),str(part_id)))
+    cursor.execute("UPDATE Orders SET Return_date = %s WHERE Part_ID = %s AND Available = 'NOT_RETURNED'", (str(date),str(part_id)))
     db_connection.commit()
 
-    #sql = "UPDATE Parts SET Return_date = '" + str(date) + "' WHERE Part_ID = '" + str(part_id)+"'"
 
     cursor.execute("UPDATE Parts SET Return_date = %s WHERE Part_ID = %s", (str(date),str(part_id)))
     db_connection.commit()
@@ -277,13 +275,11 @@ def return_item(MAC):
     cursor.execute("UPDATE Parts SET Return_date = NULL WHERE MAC = %s", cp_mac )
     db_connection.commit()
 
-   # sql = "UPDATE Orders SET Return_date = '" + datetime.today().strftime('%Y-%m-%d') + "' WHERE Part_ID = '" + str(part_id) + "' AND Available = 'NotReturned' "
     todays_date = datetime.today().strftime('%Y-%m-%d')
-    cursor.execute("UPDATE Orders SET Return_date = %s WHERE Part_ID = %s AND Available = 'NotReturned' ", (todays_date, str(part_id)))
+    cursor.execute("UPDATE Orders SET Return_date = %s WHERE Part_ID = %s AND Available = 'NOT_RETURNED' ", (todays_date, str(part_id)))
     db_connection.commit()
 
-    #sql = "UPDATE Orders SET Available = 'Returned' WHERE Part_ID = '" + str(part_id) + "' AND Available = 'NotReturned' "
-    cursor.execute("UPDATE Orders SET Available = 'Returned' WHERE Part_ID = %s AND Available = 'NotReturned' ",(str(part_id),))
+    cursor.execute("UPDATE Orders SET Available = 'RETURNED' WHERE Part_ID = %s AND Available = 'NOT_RETURNED' ",(str(part_id),))
     db_connection.commit()
 
 
@@ -297,7 +293,7 @@ def get_order_info(part_id):
     db_connection = setup()
     cursor = db_connection.cursor()
     cursor.execute("SELECT Users.name, Users.surname, Users.email, Users.phone \
-        FROM Users, Orders WHERE Orders.User_ID = Users.User_ID AND Orders.Part_ID = %s AND Orders.Available = 'NotReturned'", (str(part_id),))
+        FROM Users, Orders WHERE Orders.User_ID = Users.User_ID AND Orders.Part_ID = %s AND Orders.Available = 'NOT_RETURNED'", (str(part_id),))
     part = cursor.fetchone()
 
     information['name']=part[0]
